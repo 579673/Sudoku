@@ -3,7 +3,7 @@ package no.hvl.sudoku.model;
 /**
  * Represents a coordinate for a Sudoku cell
  */
-public class CellCoordinate {
+public class CellCoordinate implements Cloneable {
     private int col;
     private int row;
 
@@ -19,5 +19,29 @@ public class CellCoordinate {
     public CellCoordinate(int index) {
         this.col = index % 9;
         this.row = index / 9;
+    }
+
+    public int getCol() {
+        return col;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+    public int getNumber() {
+        return col + row * 9;
+    }
+
+    public int getSquareNumber() {
+        int squareCol = col / 3;
+        int squareRow = row / 3;
+
+        return squareCol + squareRow * 3;
+    }
+
+    @Override
+    public Object clone() {
+        return new CellCoordinate(col, row);
     }
 }
