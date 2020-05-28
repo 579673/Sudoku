@@ -3,7 +3,8 @@ package no.hvl.sudoku.model;
 import no.hvl.sudoku.model.exceptions.IllegalSudokuMoveException;
 import no.hvl.sudoku.model.interfaces.Sudoku;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -24,7 +25,8 @@ public class ArraySudoku implements Sudoku, Cloneable {
     }
 
     public ArraySudoku() {
-        this.cells = new ArrayList<>();
+        this.cells = new ArrayList<>(STANDARD_SIZE);
+
         for (int i = 0; i < STANDARD_SIZE; i++) {
             cells.add(new Cell(i, 0));
         }
@@ -32,8 +34,8 @@ public class ArraySudoku implements Sudoku, Cloneable {
 
     public ArraySudoku(ArraySudoku sudoku) {
         this.cells = sudoku.cells.stream()
-                .map(c -> (Cell)c.clone())
-                .collect(Collectors.toList());
+            .map(c -> (Cell) c.clone())
+            .collect(Collectors.toList());
     }
 
     @Override
@@ -45,7 +47,7 @@ public class ArraySudoku implements Sudoku, Cloneable {
 
     @Override
     public List<Cell> getColumn(int colNumber) {
-        List<Cell> col = new ArrayList<>();
+        List<Cell> col = new ArrayList<>(cells.size() / 9);
         for (int i = colNumber; i < cells.size(); i += 9) {
             col.add(cells.get(i));
         }
@@ -66,6 +68,7 @@ public class ArraySudoku implements Sudoku, Cloneable {
                 square.add(cells.get(convertRowColToCellNumber(col, row)));
             }
         }
+
         return square;
     }
 
@@ -109,15 +112,14 @@ public class ArraySudoku implements Sudoku, Cloneable {
      * @throws IllegalSudokuMoveException if cell has value or move is not among candidates
      */
     @Override
-    public void setCellValue(int cellNumber, int value)
-            throws IllegalSudokuMoveException {
-
+    public void setCellValue(int cellNumber, int value) throws IllegalSudokuMoveException {
         Cell cell = cells.get(cellNumber);
+
         if (cell.hasValue() || !cell.getCandidates().contains(value)) {
             throw new IllegalSudokuMoveException();
         }
-        cell.setValue(value);
 
+        cell.setValue(value);
         getAllRelatedCells(cellNumber).forEach(c -> c.removeCandidate(value));
     }
 
@@ -140,12 +142,12 @@ public class ArraySudoku implements Sudoku, Cloneable {
     }
 
     @Override
-    public Set<Integer> getCellCandidates(int cellNumber) {
+    public List<Integer> getCellCandidates(int cellNumber) {
         return cells.get(cellNumber).getCandidates();
     }
 
     @Override
-    public Set<Integer> getCellCandidates(int colNumber, int rowNumber) {
+    public List<Integer> getCellCandidates(int colNumber, int rowNumber) {
         int cellNumber = convertRowColToCellNumber(colNumber, rowNumber);
         return cells.get(cellNumber).getCandidates();
     }
@@ -157,8 +159,7 @@ public class ArraySudoku implements Sudoku, Cloneable {
 
     @Override
     public boolean isSolvable() {
-        return cells.stream()
-                .noneMatch(c -> !c.hasValue() && c.getCandidates().size() == 0);
+        return cells.stream().noneMatch(c -> !c.hasValue() && c.getCandidates().isEmpty());
     }
 
     @Override
@@ -168,20 +169,20 @@ public class ArraySudoku implements Sudoku, Cloneable {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
+
         for (int i = 0; i < cells.size(); i++) {
             if (i != 0 && i % 9 == 0) {
                 sb.append('\n');
             }
-            sb.append(cells.get(i));
-            sb.append(' ');
 
+            sb.append(cells.get(i)).append(' ');
         }
+
         return sb.toString();
     }
 
     private int convertRowColToCellNumber(int colNumber, int rowNumber) {
         return colNumber + rowNumber * 9;
     }
-
 }
