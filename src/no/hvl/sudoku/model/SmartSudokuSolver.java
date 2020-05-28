@@ -90,23 +90,23 @@ public class SmartSudokuSolver implements Solver {
             int squareNumber = cell.getPosition().getSquareNumber();
 
             List<Integer> rowCandidates = sudoku.getRow(rowNumber).stream()
-                    .filter(c -> c != cell)
-                    .flatMap(c -> c.getCandidates().stream())
-                    .collect(Collectors.toList());
+                .filter(c -> c != cell)
+                .flatMap(c -> c.getCandidates().stream())
+                .collect(Collectors.toList());
             List<Integer> colCandidates = sudoku.getColumn(colNumber).stream()
-                    .filter(c -> c != cell)
-                    .flatMap(c -> c.getCandidates().stream())
-                    .collect(Collectors.toList());
+                .filter(c -> c != cell)
+                .flatMap(c -> c.getCandidates().stream())
+                .collect(Collectors.toList());
             List<Integer> squareCandidates = sudoku.getSquare(squareNumber).stream()
-                    .filter(c -> c != cell)
-                    .flatMap(c -> c.getCandidates().stream())
-                    .collect(Collectors.toList());
+                .filter(c -> c != cell)
+                .flatMap(c -> c.getCandidates().stream())
+                .collect(Collectors.toList());
 
             int uniqueCandidate = 0;
 
             for (int candidate : cell.getCandidates()) {
                 if (!rowCandidates.contains(candidate) || !colCandidates.contains(candidate) ||
-                    !squareCandidates.contains(candidate)) {
+                        !squareCandidates.contains(candidate)) {
                     uniqueCandidate = candidate;
                     break;
                 }

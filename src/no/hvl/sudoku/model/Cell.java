@@ -1,13 +1,14 @@
 package no.hvl.sudoku.model;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A Cell class for a sudoku game. Stores information about the cells in the Sudoku grid.
  */
 public class Cell implements Cloneable {
 
-    private final List<Integer> candidates;
+    private final LinkedList<Integer> candidates;
 
     private int value;
 
@@ -23,7 +24,7 @@ public class Cell implements Cloneable {
      * @param value
      */
     public Cell(int index, int value) {
-        this.candidates = new ArrayList<>(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9));
+        this.candidates = new LinkedList<>(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9));
         this.value = value;
         this.position = new CellCoordinate(index);
     }
@@ -49,7 +50,7 @@ public class Cell implements Cloneable {
             return 0;
         }
 
-        return candidates.get(0);
+        return candidates.getFirst();
     }
 
     public void removeCandidate(Integer candidate) {
@@ -85,7 +86,7 @@ public class Cell implements Cloneable {
         return this.value == other.getValue();
     }
 
-    private Cell(List<Integer> candidates, int value, CellCoordinate position) {
+    private Cell(LinkedList<Integer> candidates, int value, CellCoordinate position) {
         this.candidates = candidates;
         this.value = value;
         this.position = position;
@@ -97,7 +98,7 @@ public class Cell implements Cloneable {
 
     @Override
     public Object clone() {
-        return new Cell(new ArrayList<>(candidates), value, (CellCoordinate) position.clone());
+        return new Cell(new LinkedList<>(candidates), value, (CellCoordinate) position.clone());
     }
 
     @Override
