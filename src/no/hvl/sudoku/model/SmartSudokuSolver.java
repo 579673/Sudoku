@@ -7,8 +7,8 @@ import java.util.ArrayDeque;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class SmartSudokuSolver implements Solver {
@@ -40,15 +40,15 @@ public class SmartSudokuSolver implements Solver {
     }
 
     private void guessValueAndStoreSnapshotOnStack() {
-        Cell cellWithFewestCandidates = findCellWithFewestCandidates();
-        //System.out.println("Cell with fewest candidates: " + cellWithFewestCandidates.getCandidates());
+        Optional<Cell> maybeCellWithFewestCandidates = findCellWithFewestCandidates();
 
-        int candidate = cellWithFewestCandidates.getFirstCandidate();
-
-        if (candidate == 0) {
+        if (maybeCellWithFewestCandidates.isEmpty()) {
             return;
         }
 
+        Cell cellWithFewestCandidates = maybeCellWithFewestCandidates.get();
+
+        int candidate = cellWithFewestCandidates.getFirstCandidate();
         storeSudokuOnStack();
         int cellNumber = cellWithFewestCandidates.getPosition().getNumber();
         stack.peek().getCell(cellNumber).removeCandidate(candidate);
@@ -89,18 +89,18 @@ public class SmartSudokuSolver implements Solver {
             int colNumber = cell.getPosition().getCol();
             int squareNumber = cell.getPosition().getSquareNumber();
 
-            Set<Integer> rowCandidates = sudoku.getRow(rowNumber).stream()
+            List<Integer> rowCandidates = sudoku.getRow(rowNumber).stream()
                     .filter(c -> c != cell)
                     .flatMap(c -> c.getCandidates().stream())
-                    .collect(Collectors.toSet());
-            Set<Integer> colCandidates = sudoku.getColumn(colNumber).stream()
+                    .collect(Collectors.toList());
+            List<Integer> colCandidates = sudoku.getColumn(colNumber).stream()
                     .filter(c -> c != cell)
                     .flatMap(c -> c.getCandidates().stream())
-                    .collect(Collectors.toSet());
-            Set<Integer> squareCandidates = sudoku.getSquare(squareNumber).stream()
+                    .collect(Collectors.toList());
+            List<Integer> squareCandidates = sudoku.getSquare(squareNumber).stream()
                     .filter(c -> c != cell)
                     .flatMap(c -> c.getCandidates().stream())
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toList());
 
             int uniqueCandidate = 0;
 
