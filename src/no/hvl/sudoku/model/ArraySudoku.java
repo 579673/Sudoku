@@ -4,7 +4,6 @@ import no.hvl.sudoku.model.exceptions.IllegalSudokuMoveException;
 import no.hvl.sudoku.model.interfaces.Sudoku;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;

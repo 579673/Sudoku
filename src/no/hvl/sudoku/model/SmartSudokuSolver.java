@@ -20,26 +20,29 @@ public class SmartSudokuSolver implements Solver {
         System.out.println(sudoku + "\n");
         while(noEndConditionReached()) {
             solveIteration();
-            //System.out.println(sudoku + "\n");
         }
     }
 
     public void solveIteration() {
-        if (!resolveCellsWithSoleCandidate()) {
-            if (!resolveCellsWithUniqueCandidate()) {
-                Cell cellWithFewestCandidates = findCellWithFewestCandidates();
-                System.out.println("Cell with fewest candidates: " + cellWithFewestCandidates.getCandidates());
-                if (cellWithFewestCandidates.getCandidates().isEmpty()) {
-                    return;
-                }
-                // This is safe because I have already checked that the set isn't empty
-                int candidate = cellWithFewestCandidates.getCandidates().stream().findFirst().get();
-                storeSudokuOnStack();
-                int cellNumber = cellWithFewestCandidates.getPosition().getNumber();
-                stack.peek().getCell(cellNumber).removeCandidate(candidate);
-                sudoku.setCellValue(cellNumber, candidate);
-            }
+        boolean moveMade = resolveCellsWithSoleCandidate() || resolveCellsWithUniqueCandidate();
+
+        if (!moveMade) {
+            guessValueAndStoreSnapshotOnStack();
         }
+    }
+
+    private void guessValueAndStoreSnapshotOnStack() {
+        Cell cellWithFewestCandidates = findCellWithFewestCandidates();
+        System.out.println("Cell with fewest candidates: " + cellWithFewestCandidates.getCandidates());
+        if (cellWithFewestCandidates.getCandidates().isEmpty()) {
+            return;
+        }
+        // This is safe because I have already checked that the set isn't empty
+        int candidate = cellWithFewestCandidates.getCandidates().stream().findFirst().get();
+        storeSudokuOnStack();
+        int cellNumber = cellWithFewestCandidates.getPosition().getNumber();
+        stack.peek().getCell(cellNumber).removeCandidate(candidate);
+        sudoku.setCellValue(cellNumber, candidate);
     }
 
     public boolean noEndConditionReached() {
@@ -86,12 +89,21 @@ public class SmartSudokuSolver implements Solver {
                     .filter(c -> c != cell)
                     .flatMap(c -> c.getCandidates().stream())
                     .collect(Collectors.toSet());
-
+            /* This is for some reason significantly slower
+            Set<Integer> candidatesSet = Stream.of(
+                    sudoku.getRow(rowNumber),
+                    sudoku.getColumn(colNumber),
+                    sudoku.getSquare(squareNumber))
+                    .flatMap(Collection::stream)
+                    .filter(c -> c != cell)
+                    .flatMap(c -> c.getCandidates().stream())
+                    .collect(Collectors.toSet());
+            */
             int uniqueCandidate = 0;
             for (int candidate : cell.getCandidates()) {
                 if (    !rowCandidates.contains(candidate) ||
                         !colCandidates.contains(candidate) ||
-                        !squareCandidates.contains(candidate)) {
+                        !squareCandidates.contains(candidate) ) {
 
                     uniqueCandidate = candidate;
                     break;
