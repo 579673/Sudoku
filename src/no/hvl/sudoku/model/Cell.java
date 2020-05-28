@@ -6,8 +6,11 @@ import java.util.*;
  * A Cell class for a sudoku game. Stores information about the cells in the Sudoku grid.
  */
 public class Cell implements Cloneable {
-    private final Set<Integer> candidates;
+
+    private final List<Integer> candidates;
+
     private int value;
+
     private CellCoordinate position;
 
     public Cell(int col, int row, int value) {
@@ -20,7 +23,7 @@ public class Cell implements Cloneable {
      * @param value
      */
     public Cell(int index, int value) {
-        this.candidates = new HashSet<>(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9));
+        this.candidates = new ArrayList<>(List.of(1, 2, 3, 4, 5, 6, 7, 8, 9));
         this.value = value;
         this.position = new CellCoordinate(index);
     }
@@ -37,27 +40,29 @@ public class Cell implements Cloneable {
      * Gets the viable candidates for a cell
      * @return set of candidates
      */
-    public Set<Integer> getCandidates() {
-        return this.candidates;
+    public List<Integer> getCandidates() {
+        return candidates;
     }
 
     public int getFirstCandidate() {
-        if(candidates.isEmpty()) {
+        if (candidates.isEmpty()) {
             return 0;
         }
-        return (int)candidates.toArray()[0];
+
+        return candidates.get(0);
     }
 
-    public void removeCandidate(int candidate) {
+    public void removeCandidate(Integer candidate) {
         this.candidates.remove(candidate);
     }
 
     public int getValue() {
-        return this.value;
+        return value;
     }
 
     public void setValue(int value) {
         candidates.clear();
+
         this.value = value;
     }
 
@@ -70,21 +75,20 @@ public class Cell implements Cloneable {
         if (o == this) {
             return true;
         }
+
         if (!(o instanceof Cell)) {
             return false;
         }
-        Cell other = (Cell)o;
+
+        Cell other = (Cell) o;
+
         return this.value == other.getValue();
     }
 
-    private Cell(Set<Integer> candidates, int value, CellCoordinate position) {
+    private Cell(List<Integer> candidates, int value, CellCoordinate position) {
         this.candidates = candidates;
         this.value = value;
         this.position = position;
-    }
-
-    public int getNumberOfCandidates() {
-        return candidates.size();
     }
 
     public boolean hasSoleCandidate() {
@@ -93,11 +97,7 @@ public class Cell implements Cloneable {
 
     @Override
     public Object clone() {
-        return new Cell(
-                new HashSet<>(candidates),
-                value,
-                (CellCoordinate)position.clone()
-        );
+        return new Cell(new ArrayList<>(candidates), value, (CellCoordinate) position.clone());
     }
 
     @Override

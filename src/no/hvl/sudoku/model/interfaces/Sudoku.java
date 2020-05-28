@@ -20,8 +20,8 @@ public interface Sudoku {
     int getCellValue(int colNumber, int rowNumber);
     void setCellValue(int cellNumber, int value);
     void setCellValue(int colNumber, int rowNumber, int value);
-    Set<Integer> getCellCandidates(int cellNumber);
-    Set<Integer> getCellCandidates(int colNumber, int rowNumber);
+    List<Integer> getCellCandidates(int cellNumber);
+    List<Integer> getCellCandidates(int colNumber, int rowNumber);
     List<Cell> getCells();
     boolean isSolvable();
     boolean isSolved();

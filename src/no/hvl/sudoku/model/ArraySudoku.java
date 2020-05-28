@@ -141,12 +141,12 @@ public class ArraySudoku implements Sudoku, Cloneable {
     }
 
     @Override
-    public Set<Integer> getCellCandidates(int cellNumber) {
+    public List<Integer> getCellCandidates(int cellNumber) {
         return cells.get(cellNumber).getCandidates();
     }
 
     @Override
-    public Set<Integer> getCellCandidates(int colNumber, int rowNumber) {
+    public List<Integer> getCellCandidates(int colNumber, int rowNumber) {
         int cellNumber = convertRowColToCellNumber(colNumber, rowNumber);
         return cells.get(cellNumber).getCandidates();
     }
