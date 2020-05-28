@@ -6,4 +6,5 @@ package no.hvl.sudoku.model.interfaces;
 public interface Solver {
     void solve();
     Sudoku getSudoku();
+    void setSudoku(Sudoku sudoku);
 }

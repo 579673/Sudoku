@@ -15,12 +15,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+/*
+    Build's benchmark:
+    https://github.com/PhaseRush/Benched/blob/91d86326fc52a64094f6fdc5ef1d03a0bc7f7185/src/main/java/sudoku/oak/OakSudokuBench.java#L31
+ */
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class DynamicSolverTest {
@@ -37,22 +41,20 @@ public class DynamicSolverTest {
                     .map(line -> line.chars().map(c -> c - '0').toArray())
                     .map(ArraySudoku::new)
                     .collect(Collectors.toList());
-
         } catch (IOException e) {
             sudokus = new ArrayList<>();
             e.printStackTrace();
         }
     }
 
-
-
     @TestFactory
     Stream<DynamicTest> dynamicTestForArraySolver() {
+        Solver solver = new SmartSudokuSolver();
         return sudokus.stream()
                 .map(s -> DynamicTest.dynamicTest(
                         "Sudoku",
                         () -> {
-                            Solver solver = new SmartSudokuSolver(s);
+                            solver.setSudoku(s);
                             solver.solve();
                             assertTrue(solver.getSudoku().isSolved());
                         }

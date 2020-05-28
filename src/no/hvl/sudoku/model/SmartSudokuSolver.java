@@ -8,16 +8,21 @@ import java.util.stream.Collectors;
 
 public class SmartSudokuSolver implements Solver {
     private Sudoku sudoku;
-    private final Stack<Sudoku> stack;
+    private Stack<Sudoku> stack;
 
     public SmartSudokuSolver(Sudoku sudoku) {
         this.sudoku = sudoku;
         this.stack = new Stack<>();
     }
 
+    public SmartSudokuSolver() {
+        this.sudoku = null;
+        this.stack = null;
+    }
+
     @Override
     public void solve() {
-        System.out.println(sudoku + "\n");
+        //System.out.println(sudoku + "\n");
         while(noEndConditionReached()) {
             solveIteration();
         }
@@ -33,7 +38,7 @@ public class SmartSudokuSolver implements Solver {
 
     private void guessValueAndStoreSnapshotOnStack() {
         Cell cellWithFewestCandidates = findCellWithFewestCandidates();
-        System.out.println("Cell with fewest candidates: " + cellWithFewestCandidates.getCandidates());
+        //System.out.println("Cell with fewest candidates: " + cellWithFewestCandidates.getCandidates());
         if (cellWithFewestCandidates.getCandidates().isEmpty()) {
             return;
         }
@@ -90,6 +95,7 @@ public class SmartSudokuSolver implements Solver {
                     .flatMap(c -> c.getCandidates().stream())
                     .collect(Collectors.toSet());
             /* This is for some reason significantly slower
+                TODO:  refactor to List and try again
             Set<Integer> candidatesSet = Stream.of(
                     sudoku.getRow(rowNumber),
                     sudoku.getColumn(colNumber),
@@ -132,6 +138,12 @@ public class SmartSudokuSolver implements Solver {
     @Override
     public Sudoku getSudoku() {
         return sudoku;
+    }
+
+    @Override
+    public void setSudoku(Sudoku sudoku) {
+        this.sudoku = sudoku;
+        this.stack = new Stack<>();
     }
 
 }
