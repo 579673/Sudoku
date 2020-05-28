@@ -24,33 +24,35 @@ public class SmartSudokuSolver implements Solver {
 
     @Override
     public void solve() {
-        //System.out.println(sudoku + "\n");
-        while(noEndConditionReached()) {
+        System.out.println(sudoku + "\n");
+
+        while (noEndConditionReached()) {
             solveIteration();
-            //System.out.println(sudoku + "\n");
         }
     }
 
     public void solveIteration() {
-        if (!resolveCellsWithSoleCandidate()) {
-            if (!resolveCellsWithUniqueCandidate()) {
-                Optional<Cell> maybeCellWithFewestCandidates = findCellWithFewestCandidates();
-                //System.out.println("Cell with fewest candidates: " + cellWithFewestCandidates.getCandidates());
+        boolean moveMade = resolveCellsWithSoleCandidate() || resolveCellsWithUniqueCandidate();
 
-                if (maybeCellWithFewestCandidates.isEmpty()) {
-                    return;
-                }
-
-                Cell cellWithFewestCandidates = maybeCellWithFewestCandidates.get();
-
-                // This is safe because I have already checked that the set isn't empty
-                int candidate = cellWithFewestCandidates.getFirstCandidate();
-                storeSudokuOnStack();
-                int cellNumber = cellWithFewestCandidates.getPosition().getNumber();
-                stack.peek().getCell(cellNumber).removeCandidate(candidate);
-                sudoku.setCellValue(cellNumber, candidate);
-            }
+        if (!moveMade) {
+            guessValueAndStoreSnapshotOnStack();
         }
+    }
+
+    private void guessValueAndStoreSnapshotOnStack() {
+        Cell cellWithFewestCandidates = findCellWithFewestCandidates();
+        //System.out.println("Cell with fewest candidates: " + cellWithFewestCandidates.getCandidates());
+
+        int candidate = cellWithFewestCandidates.getFirstCandidate();
+
+        if (candidate == 0) {
+            return;
+        }
+
+        storeSudokuOnStack();
+        int cellNumber = cellWithFewestCandidates.getPosition().getNumber();
+        stack.peek().getCell(cellNumber).removeCandidate(candidate);
+        sudoku.setCellValue(cellNumber, candidate);
     }
 
     public boolean noEndConditionReached() {
